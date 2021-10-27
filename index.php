@@ -25,4 +25,4 @@ $newsAggregator->addSource(new FoxNewsSource());
 $newsAggregator->addSource(new NYNewsSource());
 $newsAggregator->addSource(new BrokenSource());
 
-print_r($newsAggregator->getNews());
+echo json_encode($newsAggregator->getNews(), JSON_PRETTY_PRINT);
