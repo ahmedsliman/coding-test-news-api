@@ -2,27 +2,28 @@
 
 namespace App\NewsProviders;
 
+use App\DTO\NewsItem;
 use Package\FoxNews\FoxNews;
 
-class FoxNewsSource extends AbstractSource
+class FoxNewsSource implements NewsInterface
 {
-    protected function createSource()
+    public function getProvider()
     {
-        $this->newsProvider = new FoxNews();
+        return new FoxNews();
     }
 
     public function get()
     {
-        parent::get();
-        foreach ($this->newsProvider->getNewsFromAPI()['articles'] as $row) {
-            $this->news[] = [
-                'title'        => $row['title'],
-                'author'       => $row['author'],
-                'image'        => $row['urlToImage'],
-                'publish_date' => $row['publishedAt'],
-                'source'       => $row['source']['name'],
-                'url'          => $row['url'],
-            ];
+        foreach ($this->getProvider()->getNewsFromAPI()['articles'] as $row) {
+            $newItem = new NewsItem();
+            $newItem->setTitle($row['title']);
+            $newItem->setAuthor($row['author']);
+            $newItem->setImage($row['urlToImage'] ?? "");
+            $newItem->setPublishDate(new \DateTime($row['publishedAt']));
+            $newItem->setSource($row['source']['name']);
+            $newItem->setUrl($row['url']);
+
+            $this->news[] = $newItem;
         }
 
         return $this->news;

@@ -4,11 +4,11 @@ namespace App\NewsProviders;
 
 use Package\BrokenProvider\BrokenProvider;
 
-class BrokenSource extends AbstractSource
+class BrokenSource implements NewsInterface
 {
-    protected function createSource()
+    public function getProvider()
     {
-        $this->newsProvider = new BrokenProvider();
+        return new BrokenProvider();
     }
 
     /**
@@ -16,7 +16,6 @@ class BrokenSource extends AbstractSource
      */
     public function get()
     {
-        parent::get();
-        return $this->news;
+        return $this->getProvider()->getNews();
     }
 }

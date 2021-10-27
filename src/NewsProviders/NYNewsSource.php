@@ -4,11 +4,11 @@ namespace App\NewsProviders;
 
 use Package\NYTimes\NewYorkTimes;
 
-class NYNewsSource extends AbstractSource
+class NYNewsSource implements NewsInterface
 {
-    protected function createSource()
+    public function getProvider()
     {
-        $this->newsSource = new NewYorkTimes();
+        return new NewYorkTimes();
     }
 
     /**
@@ -16,8 +16,7 @@ class NYNewsSource extends AbstractSource
      */
     public function get()
     {
-        parent::get();
-        foreach ($this->newsSource->getNews()->articles as $row) {
+        foreach ($this->getProvider()->getNews()->articles as $row) {
             $this->news[] = [
                 'title'        => (string) $row->title,
                 'author'       => (string) $row->author,

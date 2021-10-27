@@ -9,14 +9,9 @@ class Log
 {
     private $logger;
 
-    public function __construct()
+    public function __construct(Logger $logger)
     {
-        $this->logger = new Logger('news-providers');
-        $this->logger->pushHandler(new StreamHandler(
-            __DIR__ . DIRECTORY_SEPARATOR . '../logs' . DIRECTORY_SEPARATOR . 'app-errors.log',
-            Logger::DEBUG
-            )
-        );
+        $this->logger = $logger;
     }
 
     /**

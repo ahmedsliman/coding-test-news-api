@@ -7,18 +7,33 @@ use App\NewsProviders\NewsInterface;
 class NewsAggregator
 {
     private array $newsSources = [];
+    private Log $log;
 
-    /**
-     * @param NewsInterface $newsSource
-     * @return mixed
-     */
-    public function getNews(NewsInterface $newsSource)
+    public function __construct(Log $log)
     {
-        $this->newsSources = array_merge($this->newsSources, $newsSource->get());
+        $this->log = $log;
     }
 
-    public function news()
+    public function addSource(NewsInterface $source)
     {
-        return $this->newsSources;
+        $this->newsSources[] = $source;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNews()
+    {
+        $results = [];
+
+        foreach ($this->newsSources as $oneSource) {
+            try {
+                $results = array_merge($oneSource->get(), $results);
+            } catch (\Exception $exception) {
+                $this->log->log($exception->getMessage());
+            }
+        }
+
+        return $results;
     }
 }

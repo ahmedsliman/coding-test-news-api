@@ -1,16 +1,28 @@
 <?php
 
+use App\Log;
 use App\NewsAggregator;
 use App\NewsProviders\BrokenSource;
 use App\NewsProviders\FoxNewsSource;
 use App\NewsProviders\NYNewsSource;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 require __DIR__.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
 
-$newsAggregator = new NewsAggregator();
+$logger = new Logger('news-providers');
+$logger->pushHandler(new StreamHandler(
+        __DIR__ . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'app-errors.log',
+        Logger::DEBUG
+    )
+);
 
-$FoxNews = $newsAggregator->getNews(new FoxNewsSource());
-$NYNews = $newsAggregator->getNews(new NYNewsSource());
-$BrokenNews = $newsAggregator->getNews(new BrokenSource());
+$log = new Log($logger);
 
-print_r($newsAggregator->news());
+$newsAggregator = new NewsAggregator($log);
+
+$newsAggregator->addSource(new FoxNewsSource());
+$newsAggregator->addSource(new NYNewsSource());
+$newsAggregator->addSource(new BrokenSource());
+
+print_r($newsAggregator->getNews());
